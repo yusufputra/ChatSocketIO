@@ -18,9 +18,10 @@ io.sockets.on("connection", socket => {
   // console.log(socket);
   connections.push(socket);
   console.log("Connected: %s sockets connected", connections.length);
-
+  io.sockets.emit("get users", users);
   //dc
   socket.on("disconnect", data => {
+    if(socket.username === undefined) return;
     users.splice(users.indexOf(socket.username), 1);
     console.log("halo1");
     updateUser();
@@ -31,15 +32,18 @@ io.sockets.on("connection", socket => {
   socket.on("send message", (data) => {
     console.log("halo2");
     console.log(data);
-    io.sockets.emit("new message", { msg: data.msg });
+    io.sockets.emit("new message", { msg: data });
     // socket.broadcast.to(data.id).emit("new message", { msg: data.msg })
+    // socket.to(data.id).emit("new message", { msg: data.msg })
+
   });
 
   socket.on('subscribe',function(room){  
     try{
       console.log('[socket]','join room :',room, socket.id)
       socket.join(room);
-      socket.to(room).emit('user joined', socket.id);
+      updateUser();
+      socket.to(room).emit('user joined', room);
     }catch(e){
       console.log('[error]','join room :',e);
       socket.emit('error','couldnt perform requested action');
