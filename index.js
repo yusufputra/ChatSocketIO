@@ -11,7 +11,8 @@ server.listen(port, () => {
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+  // res.sendFile(__dirname + "/index.html");
+   res.json({message: "good morning"});
 });
 
 io.sockets.on("connection", socket => {
